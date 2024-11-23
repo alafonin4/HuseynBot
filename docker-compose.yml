@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  bot:
+  Huseynbot:
     build: .
     depends_on:
-      - db
+      - db_huseyn
     environment:
-      - DB_URL=jdbc:postgresql://db:5432/postgres
-      - DB_USER=postgres
+      - DB_URL=jdbc:postgresql://Huseynbot:5432/postgres
+      - DB_USER=mh
       - DB_PASSWORD=tgbot
 
-  db:
+  db_huseyn:
     image: postgres:13
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: mh
       POSTGRES_PASSWORD: tgbot
     ports:
-      - "5432:5433"
+      - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
