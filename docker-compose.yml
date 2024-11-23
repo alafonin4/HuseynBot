@@ -6,7 +6,7 @@ services:
     depends_on:
       - db_huseyn
     environment:
-      - DB_URL=jdbc:postgresql://huseynbot:5432/postgres
+      - DB_URL=jdbc:postgresql://db_huseyn:5432/postgres
       - DB_USER=postgres
       - DB_PASSWORD=tgbot
 
