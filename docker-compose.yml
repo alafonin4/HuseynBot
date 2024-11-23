@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  Huseynbot:
+  huseynbot:
     build: .
     depends_on:
       - db_huseyn
     environment:
-      - DB_URL=jdbc:postgresql://Huseynbot:5432/postgres
+      - DB_URL=jdbc:postgresql://huseynbot:5432/postgres
       - DB_USER=mh
       - DB_PASSWORD=tgbot
 
