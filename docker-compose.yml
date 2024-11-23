@@ -7,14 +7,14 @@ services:
       - db_huseyn
     environment:
       - DB_URL=jdbc:postgresql://huseynbot:5432/postgres
-      - DB_USER=mh
+      - DB_USER=postgres
       - DB_PASSWORD=tgbot
 
   db_huseyn:
     image: postgres:13
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: mh
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: tgbot
     ports:
       - "5433:5432"
