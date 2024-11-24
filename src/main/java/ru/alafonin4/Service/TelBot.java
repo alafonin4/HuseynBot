@@ -273,6 +273,8 @@ public class TelBot extends TelegramLongPollingBot {
             switch (messageText) {
                 case "Начать тест":
                 case "Оғози тест":
+                    startTest(chatId);
+                    break;
                 case "/start":
                     startFunc(update, chatId);
                     break;
@@ -291,7 +293,6 @@ public class TelBot extends TelegramLongPollingBot {
                     changeCurrentLanguage(chatId);
                     break;
                 default:
-
                     sendMessage(chatId, "Извините, команда не распознана.");
                     break;
             }
@@ -331,6 +332,8 @@ public class TelBot extends TelegramLongPollingBot {
             switch (messageText) {
                 case "Начать тест":
                 case "Оғози тест":
+                    startTest(chatId);
+                    break;
                 case "/start":
                     startFunc(update, chatId);
                     break;
@@ -853,8 +856,24 @@ public class TelBot extends TelegramLongPollingBot {
         List<Button> row = new ArrayList<>();
         row.add(new Button("Начать тестирование", "startTest"));
         buttons.add(row);
-        SendMessageWithKeyboard(chatId, EmojiParser.parseToUnicode("Привет, " + chat.getFirstName() + "! " +
-                "Я - бот, который определит твой уровень англ."), buttons);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText(EmojiParser.parseToUnicode("Привет, " + chat.getFirstName() + "! " +
+                "Я - бот, который определит твой уровень англ."));
+        if (userRepository.findById(chatId).get().getRole().equals(Role.Customer)) {
+            sendMessage.setReplyMarkup(KeyboardMarkupBuilder.setReplyKeyboardWithRaw(getKeyboardForCustomer(chatId)));
+        } else {
+            sendMessage.setReplyMarkup(KeyboardMarkupBuilder.setReplyKeyboardWithRaw(getKeyboardForAdmin(chatId)));
+        }
+
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        
+        SendMessageWithKeyboard(chatId, EmojiParser.parseToUnicode("Чтобы начать тест нажми кнопку " +
+                "\"Начать тестирование\""), buttons);
     }
     private void startTest(long chatId) {
         UserTestSession testSession = testService.startTest(chatId);
