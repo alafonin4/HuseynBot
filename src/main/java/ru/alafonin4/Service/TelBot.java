@@ -1233,10 +1233,6 @@ public class TelBot extends TelegramLongPollingBot {
             setUserCommands(chatId);
         } else {
             var chatId = msg.getChatId();
-            CurrentLanguage currentLanguage = new CurrentLanguage();
-            currentLanguage.setUser(userRepository.findById(chatId).get());
-            currentLanguage.setLanguage(String.valueOf(Language.RUS));
-            currentLanguageRepository.save(currentLanguage);
             setUserCommands(chatId);
         }
     }
