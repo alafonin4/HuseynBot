@@ -3,6 +3,7 @@ package ru.alafonin4.Service;
 import com.vdurmont.emoji.Emoji;
 import org.apache.poi.ss.usermodel.*;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import ru.alafonin4.Button;
@@ -301,7 +302,7 @@ public class TelBot extends TelegramLongPollingBot {
     private void getCallBackQueryUpdateFromCustomer(Update update) {
         String callbackData = update.getCallbackQuery().getData();
         var m = update.getCallbackQuery().getMessage();
-        long messageId = update.getCallbackQuery().getMessage().getMessageId();
+        Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
         if (callbackData.equals("startTest")) {
@@ -315,7 +316,7 @@ public class TelBot extends TelegramLongPollingBot {
             UserTestSession testSession = activeSessions.get(chatId);
             testService.processUserAnswer(chatId, testSession, id); // Передаем сессию
 
-            askCurrentQuestion(chatId, testSession);
+            askCurrentQuestion(chatId, testSession, messageId);
         }
     }
     private void getTextUpdateFromAdmin(Update update) {
@@ -496,7 +497,7 @@ public class TelBot extends TelegramLongPollingBot {
     private void getCallBackQueryUpdateFromAdmin(Update update) {
         String callbackData = update.getCallbackQuery().getData();
         var m = update.getCallbackQuery().getMessage();
-        long messageId = update.getCallbackQuery().getMessage().getMessageId();
+        Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
         if (callbackData.equals("startTest")) {
@@ -535,7 +536,7 @@ public class TelBot extends TelegramLongPollingBot {
             UserTestSession testSession = activeSessions.get(chatId);
             testService.processUserAnswer(chatId, testSession, id); // Передаем сессию
 
-            askCurrentQuestion(chatId, testSession);
+            askCurrentQuestion(chatId, testSession, messageId);
         }
     }
     private boolean isUserSubscribed(long userId) {
@@ -871,16 +872,16 @@ public class TelBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        
+
         SendMessageWithKeyboard(chatId, EmojiParser.parseToUnicode("Чтобы начать тест нажми кнопку " +
                 "\"Начать тестирование\""), buttons);
     }
     private void startTest(long chatId) {
         UserTestSession testSession = testService.startTest(chatId);
         activeSessions.put(chatId, testSession);
-        askCurrentQuestion(chatId, testSession);
+        askCurrentQuestion(chatId, testSession, 0);
     }
-    private void askCurrentQuestion(Long chatId, UserTestSession testSession) {
+    private void askCurrentQuestion(Long chatId, UserTestSession testSession, Integer messageId) {
         Question currentQuestion = testService.getNextQuestion(testSession);
         if (currentQuestion != null) {
             int numOfQuestion = testSession.getUserAnswers().size() + 1;
@@ -907,7 +908,25 @@ public class TelBot extends TelegramLongPollingBot {
                     buttons.add(row);
                 }
             }
-            SendMessageWithKeyboard(chatId, questionText, buttons);
+            if (messageId == 0) {
+                SendMessageWithKeyboard(chatId, questionText, buttons);
+            } else {
+                EditMessageText editMessageText = new EditMessageText();
+                editMessageText.setMessageId(messageId);
+                editMessageText.setChatId(String.valueOf(chatId));
+                editMessageText.setText(questionText);
+
+                var markup = KeyboardMarkupBuilder.setKeyboardWithRaw(buttons);
+                editMessageText.setParseMode("HTML");
+                editMessageText.setDisableWebPagePreview(true);
+                editMessageText.setReplyMarkup(markup);
+                
+                try {
+                    execute(editMessageText);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
             int countRight = 0;
             var ans = testSession.getUserAnswers();
