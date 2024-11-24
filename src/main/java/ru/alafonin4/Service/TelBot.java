@@ -229,20 +229,28 @@ public class TelBot extends TelegramLongPollingBot {
 
         long initialDelay = Duration.between(now, firstRun).toMillis();
 
-        Runnable task = () -> sendPeriodicMessage(chatId, "Это сообщение отправляется раз в два дня в 13:00!");
+        List<Word> listOfWords = (List<Word>) wordRepository.findAll();
+        Random random = new Random();
+        int number = random.nextInt(listOfWords.size());
+        Runnable task = () -> sendPeriodicMessage(listOfWords.get(number));
 
         scheduler.scheduleAtFixedRate(task, initialDelay, TimeUnit.DAYS.toMillis(2), TimeUnit.MILLISECONDS);
     }
 
-    private void sendPeriodicMessage(long chatId, String text) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
+    private void sendPeriodicMessage(Word word) {
+        List<User> users = (List<User>) userRepository.findAll();
+        String text = "";
+        for (var u:
+             users) {
+            SendMessage message = new SendMessage();
+            message.setChatId(String.valueOf(u.getChatId()));
+            message.setText(text);
 
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
     private String normalizeUsername(String username) {
@@ -264,7 +272,7 @@ public class TelBot extends TelegramLongPollingBot {
         } else {
             switch (messageText) {
                 case "Начать тест":
-                case "Нач":
+                case "Оғози тест":
                 case "/start":
                     startFunc(update, chatId);
                     break;
@@ -273,36 +281,10 @@ public class TelBot extends TelegramLongPollingBot {
                 case "/about":
                     about(chatId);
                     break;
-                case "/addAdmin":
-                    onboard(chatId);
-                    break;
-                case "Редактировать":
-                case "Ред":
-                case "/change":
-                    change(chatId);
-                    break;
-                case "/addQuestion":
-                    addQuestion(chatId);
-                    break;
-                case "Добавить вопросы":
-                case "Вопросы":
-                case "/addQuestions":
-                    addQuestions(chatId);
-                    break;
-                case "Добавить слова":
-                case "Слова":
-                case "/addWords":
-                    addWords(chatId);
-                    break;
                 case "Поддержка":
                 case "Под":
                 case "/support":
                     support(chatId);
-                    break;
-                case "Отчет по боту":
-                case "Отчет":
-                case "/report":
-                    getReport(chatId);
                     break;
                 case "Тоҷикӣ":
                 case "Русский":
@@ -348,7 +330,7 @@ public class TelBot extends TelegramLongPollingBot {
         } else {
             switch (messageText) {
                 case "Начать тест":
-                case "Нач":
+                case "Оғози тест":
                 case "/start":
                     startFunc(update, chatId);
                     break;
@@ -656,9 +638,11 @@ public class TelBot extends TelegramLongPollingBot {
                     if (i == 0) {
                         word.setWordInEnglish(cell.getStringCellValue());
                     } else if (i == 1) {
-                        word.setWordInRussian(cell.getStringCellValue());
+                        word.setTranscription(cell.getStringCellValue());
                     } else if (i == 2) {
                         word.setWordInTajik(cell.getStringCellValue());
+                    } else if (i == 3) {
+                        word.setWordInRussian(cell.getStringCellValue());
                         word.setCreatedAt(LocalDateTime.now());
                         wordRepository.save(word);
                     }
@@ -883,11 +867,26 @@ public class TelBot extends TelegramLongPollingBot {
             int numOfQuestion = testSession.getUserAnswers().size() + 1;
             String questionText = numOfQuestion + "/" + countOfQuestions + " " +currentQuestion.getText() + "\n";
             var ans = answerRepository.findAllByQuestion(currentQuestion);
-            List<List<Button>> buttons = new ArrayList<>();
-            for (Answer answer : ans) {
-                List<Button> row = new ArrayList<>();
-                row.add(new Button(answer.getAnswer(), "answer_" + answer.getId()));
-                buttons.add(row);
+            List<List<Button>> buttons = new ArrayList<>(ans.size());
+            Random random = new Random();
+            int numberOfRightAnswer = random.nextInt(ans.size());
+            for (int i = 0; i < ans.size(); i++) {
+                if (i < numberOfRightAnswer) {
+                    List<Button> row = new ArrayList<>();
+                    Answer a = ans.get(i + 1);
+                    row.add(new Button(a.getAnswer(), "answer_" + a.getId()));
+                    buttons.add(row);
+                } else if (i > numberOfRightAnswer) {
+                    List<Button> row = new ArrayList<>();
+                    Answer a = ans.get(i);
+                    row.add(new Button(a.getAnswer(), "answer_" + a.getId()));
+                    buttons.add(row);
+                } else {
+                    List<Button> row = new ArrayList<>();
+                    Answer a = ans.get(0);
+                    row.add(new Button(a.getAnswer(), "answer_" + a.getId()));
+                    buttons.add(row);
+                }
             }
             SendMessageWithKeyboard(chatId, questionText, buttons);
         } else {
@@ -1247,16 +1246,6 @@ public class TelBot extends TelegramLongPollingBot {
             var chatId = msg.getChatId();
             setUserCommands(chatId);
         }
-    }
-    private void setCurrentLanguageToUser(long chatId) {
-        List<List<Button>> buttons = new ArrayList<>();
-        List<Button> row1 = new ArrayList<>();
-        row1.add(new Button("Русский", "langRuss"));
-        buttons.add(row1);
-        List<Button> row2 = new ArrayList<>();
-        row2.add(new Button("Таджикский", "langTajik"));
-        buttons.add(row2);
-        SendMessageWithKeyboard(chatId, "Выбери язык интерфейса бота:", buttons);
     }
     private void setLanguage(long chatId, Language language) {
         CurrentLanguage currentLanguage = new CurrentLanguage();
