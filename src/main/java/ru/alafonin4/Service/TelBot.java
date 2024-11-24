@@ -260,23 +260,56 @@ public class TelBot extends TelegramLongPollingBot {
             user = userRepository.findById(chatId).get();
         }
         if (messageText.equals(SENDORDERIMAGE)) {
-            System.out.println("hihi");
+            System.out.println("hi");
         } else {
             switch (messageText) {
+                case "Начать тест":
+                case "Нач":
                 case "/start":
                     startFunc(update, chatId);
                     break;
+                case "Обо мне":
+                case "Дар бораи ман":
                 case "/about":
                     about(chatId);
+                    break;
+                case "/addAdmin":
+                    onboard(chatId);
+                    break;
+                case "Редактировать":
+                case "Ред":
+                case "/change":
+                    change(chatId);
+                    break;
+                case "/addQuestion":
+                    addQuestion(chatId);
+                    break;
+                case "Добавить вопросы":
+                case "Вопросы":
+                case "/addQuestions":
+                    addQuestions(chatId);
+                    break;
+                case "Добавить слова":
+                case "Слова":
+                case "/addWords":
+                    addWords(chatId);
+                    break;
+                case "Поддержка":
+                case "Под":
                 case "/support":
                     support(chatId);
+                    break;
+                case "Отчет по боту":
+                case "Отчет":
+                case "/report":
+                    getReport(chatId);
+                    break;
+                case "Тоҷикӣ":
+                case "Русский":
+                    changeCurrentLanguage(chatId);
+                    break;
                 default:
-                    /*if (user.getStageOfUs().equals(Stage.EnterFirstName.toString()) && !messageText.startsWith("/")) {
-                        SetUserName(chatId, normalizeUsername(messageText));
-                        greatings(chatId);
-                        friendInviteYou(chatId);
-                        break;
-                    } */
+
                     sendMessage(chatId, "Извините, команда не распознана.");
                     break;
             }
@@ -1192,10 +1225,18 @@ public class TelBot extends TelegramLongPollingBot {
             }
 
             userRepository.save(user);
-            setCurrentLanguageToUser(chatId);
+            //setCurrentLanguageToUser(chatId);
+            CurrentLanguage currentLanguage = new CurrentLanguage();
+            currentLanguage.setUser(userRepository.findById(chatId).get());
+            currentLanguage.setLanguage(String.valueOf(Language.RUS));
+            currentLanguageRepository.save(currentLanguage);
             setUserCommands(chatId);
         } else {
             var chatId = msg.getChatId();
+            CurrentLanguage currentLanguage = new CurrentLanguage();
+            currentLanguage.setUser(userRepository.findById(chatId).get());
+            currentLanguage.setLanguage(String.valueOf(Language.RUS));
+            currentLanguageRepository.save(currentLanguage);
             setUserCommands(chatId);
         }
     }
@@ -1228,9 +1269,6 @@ public class TelBot extends TelegramLongPollingBot {
             listOfCommands.add(new BotCommand("/start", "Начать тест"));
             listOfCommands.add(new BotCommand("/about", "Обо мне"));
             listOfCommands.add(new BotCommand("/support", "Поддержка"));
-            listOfCommands.add(new BotCommand("/change", "Редактировать"));
-            listOfCommands.add(new BotCommand("/addWords", "Добавить список слов"));
-            listOfCommands.add(new BotCommand("/report", "Отчет по боту"));
         }
 
         try {
