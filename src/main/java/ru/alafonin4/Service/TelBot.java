@@ -321,7 +321,19 @@ public class TelBot extends TelegramLongPollingBot {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
+        if (callbackData.equals("startTest")) {
+            startTest(chatId);
+            return;
+        }
 
+        if (callbackData.startsWith("answer_")) {
+            var str = callbackData.split("_");
+            long id = Long.parseLong(str[1]);
+            UserTestSession testSession = activeSessions.get(chatId);
+            testService.processUserAnswer(chatId, testSession, id); // Передаем сессию
+
+            askCurrentQuestion(chatId, testSession);
+        }
     }
     private void getTextUpdateFromAdmin(Update update) {
         long chatId = update.getMessage().getChatId();
