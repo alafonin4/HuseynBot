@@ -384,6 +384,15 @@ public class TelBot extends TelegramLongPollingBot {
                         us.setRole(Role.Admin);
                         userRepository.save(us);
                         setUserCommands(us.getChatId());
+                        SendMessage sendMessage = new SendMessage();
+                        sendMessage.setChatId(String.valueOf(chatId));
+                        sendMessage.setText("Вы назначены админом");
+                        sendMessage.setReplyMarkup(KeyboardMarkupBuilder.setReplyKeyboardWithRaw(getKeyboardForAdmin(chatId)));
+                        try {
+                            execute(sendMessage);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     } else if (user.getStageOfUs().equals(Stage.EnterQuestionToAdd.toString()) && !messageText.startsWith("/")) {
                         Question q = new Question();
@@ -1215,10 +1224,10 @@ public class TelBot extends TelegramLongPollingBot {
         List<List<Button>> buttons = new ArrayList<>();
         var lang = currentLanguageRepository.findByUser(userRepository.findById(chatId).get());
         boolean isRus = lang.getLanguage().equals(String.valueOf(Language.RUS));
-        String start = isRus ? "Начать тест"  :  "Оғози тест";
+        String start = isRus ? "Начать тест \uD83D\uDCDD"  :  "Оғози тест \uD83D\uDCDD";
         String about = isRus ? "Обо мне \uD83D\uDCD6"  :  "Дар бораи ман \uD83D\uDCD6";
         String support = isRus ? "Поддержка \uD83D\uDCAC"  :  "Тамос гирифтан \uD83D\uDCAC";
-        String changeLang = isRus ? "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF"  :  "Русский \uD83D\uDCDD";
+        String changeLang = isRus ? "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF"  :  "Русский \uD83C\uDDF7\uD83C\uDDFA";
 
         List<Button> row1 = new ArrayList<>();
         row1.add(new Button(start, ""));
