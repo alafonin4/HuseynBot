@@ -279,18 +279,18 @@ public class TelBot extends TelegramLongPollingBot {
                 case "/start":
                     startFunc(update, chatId);
                     break;
-                case "Обо мне":
-                case "Дар бораи ман":
+                case "Обо мне \uD83D\uDCD6":
+                case "Дар бораи ман \uD83D\uDCD6":
                 case "/about":
                     about(chatId);
                     break;
-                case "Поддержка":
-                case "Тамос гирифтан":
+                case "Поддержка \uD83D\uDCAC":
+                case "Тамос гирифтан \uD83D\uDCAC":
                 case "/support":
                     support(chatId);
                     break;
-                case "Тоҷикӣ":
-                case "Русский":
+                case "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF":
+                case "Русский \uD83C\uDDF7\uD83C\uDDFA":
                     changeCurrentLanguage(chatId);
                     break;
                 default:
@@ -331,15 +331,15 @@ public class TelBot extends TelegramLongPollingBot {
             System.out.println("hi");
         } else {
             switch (messageText) {
-                case "Начать тест":
-                case "Оғози тест":
+                case "Начать тест \uD83D\uDCDD":
+                case "Оғози тест \uD83D\uDCDD":
                     startTest(chatId);
                     break;
                 case "/start":
                     startFunc(update, chatId);
                     break;
-                case "Обо мне":
-                case "Дар бораи ман":
+                case "Обо мне \uD83D\uDCD6":
+                case "Дар бораи ман \uD83D\uDCD6":
                 case "/about":
                     about(chatId);
                     break;
@@ -364,8 +364,8 @@ public class TelBot extends TelegramLongPollingBot {
                 case "/addWords":
                     addWords(chatId);
                     break;
-                case "Поддержка":
-                case "Тамос гирифтан":
+                case "Поддержка \uD83D\uDCAC":
+                case "Тамос гирифтан \uD83D\uDCAC":
                 case "/support":
                     support(chatId);
                     break;
@@ -374,8 +374,8 @@ public class TelBot extends TelegramLongPollingBot {
                 case "/report":
                     getReport(chatId);
                     break;
-                case "Тоҷикӣ":
-                case "Русский":
+                case "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF":
+                case "Русский \uD83C\uDDF7\uD83C\uDDFA":
                     changeCurrentLanguage(chatId);
                     break;
                 default:
@@ -1241,7 +1241,7 @@ public class TelBot extends TelegramLongPollingBot {
         String start = isRus ? "Начать тест \uD83D\uDCDD"  :  "Оғози тест \uD83D\uDCDD";
         String about = isRus ? "Обо мне \uD83D\uDCD6"  :  "Дар бораи ман \uD83D\uDCD6";
         String support = isRus ? "Поддержка \uD83D\uDCAC"  :  "Тамос гирифтан \uD83D\uDCAC";
-        String changeLang = isRus ? "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF"  :  "Русский \uD83D\uDCDD";
+        String changeLang = isRus ? "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF"  :  "Русский \uD83C\uDDF7\uD83C\uDDFA";
         String change = isRus ? "Редактировать"  :  "Ред";
         String addQuestions = isRus ? "Добавить вопросы"  :  "Вопросы";
         String addWords = isRus ? "Добавить слова"  :  "Слова";
