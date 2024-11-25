@@ -920,7 +920,7 @@ public class TelBot extends TelegramLongPollingBot {
                 editMessageText.setParseMode("HTML");
                 editMessageText.setDisableWebPagePreview(true);
                 editMessageText.setReplyMarkup(markup);
-                
+
                 try {
                     execute(editMessageText);
                 } catch (TelegramApiException e) {
@@ -1273,7 +1273,12 @@ public class TelBot extends TelegramLongPollingBot {
                 user.setRole(Role.Customer);
             }
 
-            userRepository.save(user);
+            try {
+                userRepository.save(user);
+            } catch (Exception e) {
+                System.out.println("username is null");
+            }
+            
             //setCurrentLanguageToUser(chatId);
             CurrentLanguage currentLanguage = new CurrentLanguage();
             currentLanguage.setUser(userRepository.findById(chatId).get());
@@ -1282,6 +1287,13 @@ public class TelBot extends TelegramLongPollingBot {
             setUserCommands(chatId);
         } else {
             var chatId = msg.getChatId();
+            var chat = msg.getChat();
+            if (chat.getUserName() != null) {
+                User u = userRepository.findById(chatId).get();
+                u.setUserName(chat.getUserName());
+                userRepository.save(u);
+            }
+
             setUserCommands(chatId);
         }
     }
