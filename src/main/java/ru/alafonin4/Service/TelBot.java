@@ -285,7 +285,7 @@ public class TelBot extends TelegramLongPollingBot {
                     about(chatId);
                     break;
                 case "Поддержка":
-                case "Под":
+                case "Тамос гирифтан":
                 case "/support":
                     support(chatId);
                     break;
@@ -365,7 +365,7 @@ public class TelBot extends TelegramLongPollingBot {
                     addWords(chatId);
                     break;
                 case "Поддержка":
-                case "Под":
+                case "Тамос гирифтан":
                 case "/support":
                     support(chatId);
                     break;
@@ -1285,15 +1285,11 @@ public class TelBot extends TelegramLongPollingBot {
                 user.setRole(Role.Customer);
             }
 
-            try {
-                userRepository.save(user);
-            } catch (Exception e) {
-                System.out.println("username is null");
-            }
+            var u = userRepository.save(user);
 
             //setCurrentLanguageToUser(chatId);
             CurrentLanguage currentLanguage = new CurrentLanguage();
-            currentLanguage.setUser(userRepository.findById(chatId).get());
+            currentLanguage.setUser(u);
             currentLanguage.setLanguage(String.valueOf(Language.RUS));
             currentLanguageRepository.save(currentLanguage);
             setUserCommands(chatId);
@@ -1306,6 +1302,11 @@ public class TelBot extends TelegramLongPollingBot {
                 userRepository.save(u);
             }
 
+            User u = userRepository.findById(chatId).get();
+            CurrentLanguage currentLanguage = new CurrentLanguage();
+            currentLanguage.setUser(u);
+            currentLanguage.setLanguage(String.valueOf(Language.RUS));
+            currentLanguageRepository.save(currentLanguage);
             setUserCommands(chatId);
         }
     }
