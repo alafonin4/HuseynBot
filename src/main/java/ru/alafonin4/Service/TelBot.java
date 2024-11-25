@@ -479,12 +479,12 @@ public class TelBot extends TelegramLongPollingBot {
                         textOfMessageRepository.save(text);
                         break;
                     } else if (user.getStageOfUs().equals(Stage.ChangeRussTextSupport.toString()) && !messageText.startsWith("/")) {
-                        var text = textOfMessageRepository.findByType("about").get(0);
+                        var text = textOfMessageRepository.findByType("support").get(0);
                         text.setTextInRussian(EmojiParser.parseToUnicode(messageText));
                         textOfMessageRepository.save(text);
                         break;
                     } else if (user.getStageOfUs().equals(Stage.ChangeTajikTextSupport.toString()) && !messageText.startsWith("/")) {
-                        var text = textOfMessageRepository.findByType("about").get(0);
+                        var text = textOfMessageRepository.findByType("support").get(0);
                         text.setTextInTajik(messageText);
                         textOfMessageRepository.save(text);
                         break;
