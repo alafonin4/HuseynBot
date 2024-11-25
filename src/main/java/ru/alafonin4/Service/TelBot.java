@@ -936,11 +936,11 @@ public class TelBot extends TelegramLongPollingBot {
                     countRight++;
                 }
             }
-            printResults(chatId, countRight);
+            printResults(chatId, countRight, messageId);
             activeSessions.remove(chatId);
         }
     }
-    private void printResults(long chatId, int countOfRight) {
+    private void printResults(long chatId, int countOfRight, Integer messageId) {
         var lang = currentLanguageRepository.findByUser(userRepository.findById(chatId).get());
         String result = "";
         if (countOfRight >= 0 && countOfRight <= 5) {
@@ -962,7 +962,19 @@ public class TelBot extends TelegramLongPollingBot {
             result = "Advanced (C2) \n";
             result += lang.getLanguage().equals(String.valueOf(Language.RUS)) ? AdvancedRuss : AdvancedTajik;
         }
-        sendMessage(chatId, result);
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setMessageId(messageId);
+        editMessageText.setChatId(String.valueOf(chatId));
+        editMessageText.setText(result);
+
+        editMessageText.setParseMode("HTML");
+        editMessageText.setDisableWebPagePreview(true);
+
+        try {
+            execute(editMessageText);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
     private void getReport(long chatId) {
         try {
@@ -1278,7 +1290,7 @@ public class TelBot extends TelegramLongPollingBot {
             } catch (Exception e) {
                 System.out.println("username is null");
             }
-            
+
             //setCurrentLanguageToUser(chatId);
             CurrentLanguage currentLanguage = new CurrentLanguage();
             currentLanguage.setUser(userRepository.findById(chatId).get());
