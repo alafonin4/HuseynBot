@@ -1216,9 +1216,9 @@ public class TelBot extends TelegramLongPollingBot {
         var lang = currentLanguageRepository.findByUser(userRepository.findById(chatId).get());
         boolean isRus = lang.getLanguage().equals(String.valueOf(Language.RUS));
         String start = isRus ? "Начать тест"  :  "Оғози тест";
-        String about = isRus ? "Обо мне"  :  "Дар бораи ман";
-        String support = isRus ? "Поддержка"  :  "Тамос гирифтан";
-        String changeLang = isRus ? "Тоҷикӣ"  :  "Русский";
+        String about = isRus ? "Обо мне \uD83D\uDCD6"  :  "Дар бораи ман \uD83D\uDCD6";
+        String support = isRus ? "Поддержка \uD83D\uDCAC"  :  "Тамос гирифтан \uD83D\uDCAC";
+        String changeLang = isRus ? "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF"  :  "Русский \uD83D\uDCDD";
 
         List<Button> row1 = new ArrayList<>();
         row1.add(new Button(start, ""));
@@ -1238,10 +1238,10 @@ public class TelBot extends TelegramLongPollingBot {
         List<List<Button>> buttons = new ArrayList<>();
         var lang = currentLanguageRepository.findByUser(userRepository.findById(chatId).get());
         boolean isRus = lang.getLanguage().equals(String.valueOf(Language.RUS));
-        String start = isRus ? "Начать тест"  :  "Оғози тест";
-        String about = isRus ? "Обо мне"  :  "Дар бораи ман";
-        String support = isRus ? "Поддержка"  :  "Тамос гирифтан";
-        String changeLang = isRus ? "Тоҷикӣ"  :  "Русский";
+        String start = isRus ? "Начать тест \uD83D\uDCDD"  :  "Оғози тест \uD83D\uDCDD";
+        String about = isRus ? "Обо мне \uD83D\uDCD6"  :  "Дар бораи ман \uD83D\uDCD6";
+        String support = isRus ? "Поддержка \uD83D\uDCAC"  :  "Тамос гирифтан \uD83D\uDCAC";
+        String changeLang = isRus ? "Тоҷикӣ \uD83C\uDDF9\uD83C\uDDEF"  :  "Русский \uD83D\uDCDD";
         String change = isRus ? "Редактировать"  :  "Ред";
         String addQuestions = isRus ? "Добавить вопросы"  :  "Вопросы";
         String addWords = isRus ? "Добавить слова"  :  "Слова";
@@ -1301,12 +1301,6 @@ public class TelBot extends TelegramLongPollingBot {
                 u.setUserName(chat.getUserName());
                 userRepository.save(u);
             }
-
-            User u = userRepository.findById(chatId).get();
-            CurrentLanguage currentLanguage = new CurrentLanguage();
-            currentLanguage.setUser(u);
-            currentLanguage.setLanguage(String.valueOf(Language.RUS));
-            currentLanguageRepository.save(currentLanguage);
             setUserCommands(chatId);
         }
     }
