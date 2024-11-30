@@ -134,6 +134,7 @@ public class TelBot extends TelegramLongPollingBot {
 
     public TelBot(BotConfig config) {
         this.config = config;
+        startScheduledMessage(LocalTime.of(10, 0));
     }
 
     @Override
@@ -146,7 +147,7 @@ public class TelBot extends TelegramLongPollingBot {
             i.setStageOfUsing(Stage.DoingNothing);
             userRepository.save(i);
         }*/
-        // todo startScheduledMessage(chatId, LocalTime.of(8, 0));
+        // todo startScheduledMessage(LocalTime.of(8, 0));
         if (update.hasMessage() && update.getMessage().hasDocument()) {
             processFile(update);
         }
@@ -218,7 +219,7 @@ public class TelBot extends TelegramLongPollingBot {
         }
     }
 
-    public void startScheduledMessage(long chatId, LocalTime targetTime) {
+    public void startScheduledMessage(LocalTime targetTime) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         LocalDateTime now = LocalDateTime.now();
@@ -233,14 +234,21 @@ public class TelBot extends TelegramLongPollingBot {
         List<Word> listOfWords = (List<Word>) wordRepository.findAll();
         Random random = new Random();
         int number = random.nextInt(listOfWords.size());
+        if (number < 0) {
+            return;
+        }
         Runnable task = () -> sendPeriodicMessage(listOfWords.get(number));
 
         scheduler.scheduleAtFixedRate(task, initialDelay, TimeUnit.DAYS.toMillis(2), TimeUnit.MILLISECONDS);
     }
 
     private void sendPeriodicMessage(Word word) {
+        if (word == null) {
+            return;
+        }
         List<User> users = (List<User>) userRepository.findAll();
-        String text = "";
+        String text = word.getWordInEnglish() + " " + word.getTranscription() + " "
+                + word.getWordInRussian() + " " + word.getWordInTajik();
         for (var u:
              users) {
             SendMessage message = new SendMessage();
@@ -272,8 +280,8 @@ public class TelBot extends TelegramLongPollingBot {
             System.out.println("hi");
         } else {
             switch (messageText) {
-                case "Начать тест":
-                case "Оғози тест":
+                case "Начать тест \uD83D\uDCDD":
+                case "Оғози тест \uD83D\uDCDD":
                     startTest(chatId);
                     break;
                 case "/start":
