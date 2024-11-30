@@ -151,6 +151,7 @@ public class TelBot extends TelegramLongPollingBot {
 
         if (!isStarted) {
             startScheduledMessage(LocalTime.of(10, 0));
+            System.out.println("start schedule");
             isStarted = true;
         }
         if (update.hasMessage() && update.getMessage().hasDocument()) {
