@@ -241,6 +241,8 @@ public class TelBot extends TelegramLongPollingBot {
         Random random = new Random();
         int number = random.nextInt(listOfWords.size());
         if (number < 0) {
+            System.out.println("shutdomn");
+            scheduler.shutdown();
             return;
         }
         Runnable task = () -> sendPeriodicMessage(listOfWords.get(number));
