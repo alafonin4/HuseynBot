@@ -150,7 +150,7 @@ public class TelBot extends TelegramLongPollingBot {
         // todo startScheduledMessage(LocalTime.of(8, 0));
 
         if (!isStarted) {
-            startScheduledMessage(LocalTime.of(10, 0));
+            startScheduledMessage(LocalTime.of(8, 0));
             System.out.println("start schedule");
             isStarted = true;
         }
