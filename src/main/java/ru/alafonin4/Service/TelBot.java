@@ -107,6 +107,7 @@ public class TelBot extends TelegramLongPollingBot {
     private static final String CHANNELNAME = "@mh_teaches";
     private static final String CHANNELLINK = "https://t.me/mh_teaches";
     private final int countOfQuestions = 25;
+    private Boolean isStarted = false;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -134,7 +135,6 @@ public class TelBot extends TelegramLongPollingBot {
 
     public TelBot(BotConfig config) {
         this.config = config;
-        startScheduledMessage(LocalTime.of(10, 0));
     }
 
     @Override
@@ -148,6 +148,11 @@ public class TelBot extends TelegramLongPollingBot {
             userRepository.save(i);
         }*/
         // todo startScheduledMessage(LocalTime.of(8, 0));
+
+        if (!isStarted) {
+            startScheduledMessage(LocalTime.of(10, 0));
+            isStarted = true;
+        }
         if (update.hasMessage() && update.getMessage().hasDocument()) {
             processFile(update);
         }
