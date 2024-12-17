@@ -237,6 +237,13 @@ public class TelBot extends TelegramLongPollingBot {
 
         long initialDelay = Duration.between(now, firstRun).toMillis();
 
+        
+        Runnable task = () -> sendPeriodicMessage(scheduler);
+
+        scheduler.scheduleAtFixedRate(task, initialDelay, TimeUnit.DAYS.toMillis(2), TimeUnit.MILLISECONDS);
+    }
+
+    private void sendPeriodicMessage(ScheduledExecutorService scheduler) {
         List<Word> listOfWords = (List<Word>) wordRepository.findAll();
         Random random = new Random();
         int number = random.nextInt(listOfWords.size());
@@ -245,12 +252,7 @@ public class TelBot extends TelegramLongPollingBot {
             scheduler.shutdown();
             return;
         }
-        Runnable task = () -> sendPeriodicMessage(listOfWords.get(number));
-
-        scheduler.scheduleAtFixedRate(task, initialDelay, TimeUnit.DAYS.toMillis(2), TimeUnit.MILLISECONDS);
-    }
-
-    private void sendPeriodicMessage(Word word) {
+        var word = listOfWords.get(number);
         if (word == null) {
             return;
         }
