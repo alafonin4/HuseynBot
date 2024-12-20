@@ -168,6 +168,7 @@ public class TelBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             //updateInfo(chatId);
             String messageText = update.getMessage().getText();
+            System.out.println(isUserSubscribed(chatId, CHANNELNAME2));
             if (!isUserSubscribed(chatId, CHANNELNAME) && !isUserSubscribed(chatId, CHANNELNAME2)) {
                 sendMessageToSubscribeOnChannel(chatId);
                 return;
