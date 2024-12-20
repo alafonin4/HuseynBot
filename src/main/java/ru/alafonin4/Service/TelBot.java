@@ -106,6 +106,8 @@ public class TelBot extends TelegramLongPollingBot {
             "Муваффақ хоҳӣ шуд, агар музокиротро бо забони англисӣ анҷом диҳӣ ва шояд ба омӯзиши адабиёти англисӣ оғоз кунӣ.";
     private static final String CHANNELNAME = "@mh_teaches";
     private static final String CHANNELLINK = "https://t.me/mh_teaches";
+    private static final String CHANNELNAME2 = "@amin_shop7777";
+    private static final String CHANNELLINK2 = "https://t.me/amin_shop7777";
     private final int countOfQuestions = 25;
     private Boolean isStarted = false;
     @Autowired
@@ -166,7 +168,7 @@ public class TelBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             //updateInfo(chatId);
             String messageText = update.getMessage().getText();
-            if (!isUserSubscribed(chatId)) {
+            if (!isUserSubscribed(chatId, CHANNELNAME) && !isUserSubscribed(chatId, CHANNELNAME2)) {
                 sendMessageToSubscribeOnChannel(chatId);
                 return;
             }
@@ -205,17 +207,23 @@ public class TelBot extends TelegramLongPollingBot {
     private void sendMessageToSubscribeOnChannel(long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
-        sendMessage.setText("Минуточку. Чтобы пользоваться ботом подпишись на мой канал: \n" +
-                "<a href='" + CHANNELLINK + "'>MH’s English Hub\uD83C\uDDFA\uD83C\uDDF8</a>");
+        sendMessage.setText("Минуточку. Чтобы пользоваться ботом подпишись на мои каналы: \n" +
+                "<a href='" + CHANNELLINK + "'>MH’s English Hub\uD83C\uDDFA\uD83C\uDDF8</a> " +
+                "<a href='" + CHANNELLINK2 + "'>Мужская одежда оптом</a>");
         sendMessage.disableWebPagePreview();
         sendMessage.setParseMode("HTML");
         List<List<Button>> buttons = new ArrayList<>();
         List<Button> row1 = new ArrayList<>();
         row1.add(new Button("MH’s English Hub\uD83C\uDDFA\uD83C\uDDF8", "link", CHANNELLINK));
+
+        List<Button> row3 = new ArrayList<>();
+        row3.add(new Button("Мужская одежда оптом", "link", CHANNELLINK2));
+
         List<Button> row2 = new ArrayList<>();
         row2.add(new Button("Я подписался", "I_Subscribed"));
         buttons.add(row1);
         buttons.add(row2);
+        buttons.add(row3);
         sendMessage.setReplyMarkup(KeyboardMarkupBuilder.setKeyboardWithRaw(buttons));
 
         try {
@@ -237,7 +245,7 @@ public class TelBot extends TelegramLongPollingBot {
 
         long initialDelay = Duration.between(now, firstRun).toMillis();
 
-        
+
         Runnable task = () -> sendPeriodicMessage(scheduler);
 
         scheduler.scheduleAtFixedRate(task, initialDelay, TimeUnit.DAYS.toMillis(2), TimeUnit.MILLISECONDS);
@@ -580,9 +588,9 @@ public class TelBot extends TelegramLongPollingBot {
             askCurrentQuestion(chatId, testSession, messageId);
         }
     }
-    private boolean isUserSubscribed(long userId) {
+    private boolean isUserSubscribed(long userId, String channelName) {
         GetChatMember getChatMember = new GetChatMember();
-        getChatMember.setChatId(CHANNELNAME);
+        getChatMember.setChatId(channelName);
         getChatMember.setUserId(userId);
 
         try {
